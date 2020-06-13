@@ -26,6 +26,6 @@ File        Line#   Comment
 ``` 
 
 ## Todo
--[ ] add support to untack the hidden files like .git,.idea etc
--[ ] use click insted of argparse
--[ ] add label to the Todo
+- [ ] add support to untack the hidden files like .git,.idea etc
+- [ ] use click insted of argparse
+- [ ] add label to the Todo
