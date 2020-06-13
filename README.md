@@ -24,3 +24,8 @@ File        Line#   Comment
 -t MAX_THREADS  Define max threads (Default: 6)
 -v              Give Verbose output
 ``` 
+
+## Todo
+-[ ] add support to untack the hidden files like .git,.idea etc
+-[ ] use click insted of argparse
+-[ ] add label to the Todo
