@@ -17,16 +17,27 @@ File        Line#   Comment
 ./file.py     2     Fix output Formatting
 ```
 
-## Options
-```
--h, --help      show this help message and exit
--i IGNORE       Ignore files with a certain extentsions
--t MAX_THREADS  Define max threads (Default: 6)
--v              Give Verbose output
+## Using
+```python
+python3 todo.py --help
+Usage: todo.py [OPTIONS]
+
+Options:
+  --info TEXT           Tool to search through files on the local
+                        machine and identify @TODO tags to create a task list
+                        for developers.
+                        Usage:
+                            todo  --path=/dir
+                            todo
+                        --path=/root/project-one/
+  --path TEXT           Target path
+  --maxthreads INTEGER  Define maximmum no. of threads to be used(Default: 6)
+  --help                Show this message and exit.
+
 ```
 
 ## Todo
-- [x] add support to untack the hidden files like .git,.idea etc
-- [x] use click insted of argparse
-- [ ] add label to the Todo and use different color code for diffrent labels
-- [ ] replace all print statements with click echo
+- [x] Add support to untack the hidden files like .git,.idea etc.
+- [x] Use click instead of argparse.
+- [ ] Add label to the Todo and use different color code for diffrent labels.
+- [ ] Replace all print statement with click echo.
