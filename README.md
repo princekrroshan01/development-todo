@@ -40,4 +40,4 @@ Options:
 - [x] Add support to untack the hidden files like .git,.idea etc.
 - [x] Use click instead of argparse.
 - [ ] Add label to the Todo and use different color code for diffrent labels.
-- [ ] Replace all print statement with click echo.
+- [x] Replace all print statement with click echo.

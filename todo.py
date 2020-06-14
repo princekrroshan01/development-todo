@@ -150,13 +150,18 @@ class SearchThread(threading.Thread):
 
 
 @click.command()
-@click.option("--info", help=click.style('''Tool to search through files on the local machine and identify @TODO tags to create a task list for developers.
-Usage:
-    todo  --path=/dir
-    todo --path=/root/project-one/''',fg='bright_green',bold=True))
 @click.option("--path", help='Target path')
 @click.option("--maxthreads", default=6, help='Define maximmum no. of threads to be used(Default: 6)')
 def main(info,path,maxthreads):
+    """
+    Tool to search through files on the local machine and identify @TODO tags to create a task list for developers.
+
+    Usage:
+
+        todo  --path=/dir
+
+        todo --path=/root/project-one/
+    """
     try:
         click.echo(click.style("File\tLine#\tComment",fg='green'))
         # Launch thread to search directory and place in file queue
