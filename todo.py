@@ -7,12 +7,13 @@
 #              to create a task list for developers.
 ################################################################################
 
+import click
 import os
 import re
-import argparse
 import threading
-from time import sleep
 from sys import exit, argv, stdout
+from time import sleep
+
 
 ################################################################################
 #
@@ -42,7 +43,7 @@ class ParserThread(threading.Thread):
             for line in content:
                 if self.match(line):
                     comment = self.parse(line)
-                    print(self.filename +"  " + str(line_count) + "  "+ comment)
+                    click.echo(click.style(self.filename +"  " + str(line_count) + "  "+ comment,fg='blue'))
                 line_count += 1
         except UnicodeDecodeError as e:
             pass
@@ -146,67 +147,61 @@ class SearchThread(threading.Thread):
 # The main function that gets ran whenever the program is ran
 #
 ################################################################################
-def main(args):
-    print("File\tLine#\tComment")
-    # Launch thread to search directory and place in file queue
-    search_thread = SearchThread(args.path[0])
-    search_thread.daemon = True
-    search_thread.start()
 
-    #Wait for the SearchThread to finish running
-    while(search_thread.isRunning()):
-        sleep(0.01)
 
-    #Get the list of files
-    file_queue = search_thread.getFileQueue()
+@click.command()
+@click.option("--info", help=click.style('''Tool to search through files on the local machine and identify @TODO tags to create a task list for developers.
+Usage:
+    todo  --path=/dir
+    todo --path=/root/project-one/''',fg='bright_green',bold=True))
+@click.option("--path", help='Target path')
+@click.option("--maxthreads", default=6, help='Define maximmum no. of threads to be used(Default: 6)')
+def main(info,path,maxthreads):
+    try:
+        click.echo(click.style("File\tLine#\tComment",fg='green'))
+        # Launch thread to search directory and place in file queue
+        search_thread = SearchThread(path)
+        search_thread.daemon = True
+        search_thread.start()
 
-    #Free up the memory
-    del search_thread
+        #Wait for the SearchThread to finish running
+        while(search_thread.isRunning()):
+            sleep(0.01)
 
-    #Start file lookup
-    active_threads = []
-    while file_queue:
-        thread = ParserThread(file_queue.pop(0))
-        thread.start()
-        active_threads.append(thread)
-        while(threading.activeCount() == args.max_threads):
+        #Get the list of files
+        file_queue = search_thread.getFileQueue()
+
+        #Free up the memory
+        del search_thread
+
+        #Start file lookup
+        active_threads = []
+        while file_queue:
+            thread = ParserThread(file_queue.pop(0))
+            thread.start()
+            active_threads.append(thread)
+            while(threading.activeCount() == maxthreads):
+                sleep(0.01)
+                for thread in reversed(active_threads):
+                    if thread.isRunning() == False:
+                        active_threads.remove(thread)
+
+        # Wait for threads to close
+        while len(active_threads) > 0:
             sleep(0.01)
             for thread in reversed(active_threads):
                 if thread.isRunning() == False:
                     active_threads.remove(thread)
 
-    # Wait for threads to close
-    while len(active_threads) > 0:
-        sleep(0.01)
-        for thread in reversed(active_threads):
-            if thread.isRunning() == False:
-                active_threads.remove(thread)
+    except Exception as e:
+        click.echo("\n[!] An Unknown Event Occured, Closing...", err=True)
+        exit(1)
+    except KeyboardInterrupt:
+        click.echo("\n[!] Key Event Detected, Closing...", err=True)
+        exit(0)
+
 
 ################################################################################
 if __name__ == '__main__':
-    version = "1.1 (Alpha)"
-    try:
-        args = argparse.ArgumentParser(description="""
-                {0}   v.{1}
-        --------------------------------------------------
-Tool to search through files on the local machine and identify
-@TODO tags to create a task list for developers.
+    main()
 
-Usage:
-    todo -t 30 ./dir
-    todo /root/project-one/
-    """.format(argv[0], version), formatter_class=argparse.RawTextHelpFormatter, usage=argparse.SUPPRESS)
-        action = args.add_mutually_exclusive_group(required=False)
-        args.add_argument('-i', dest='ignore', type=str, default='', help='Ignore files with a certain extentsions')
-        args.add_argument('-t', dest='max_threads', type=int, default=6, help='Define max threads (Default: 6)')
-        args.add_argument('-v', dest="verbose", action='store_true', help="Give Verbose output")
-        args.add_argument(dest='path', nargs='+', help='Target path(s)')
-        args = args.parse_args()
-        #Start Main
-        main(args)
-    except Exception as e:
-        print("\n[!] An Unknown Event Occured, Closing...")
-        exit(1)
-    except KeyboardInterrupt:
-        print("\n[!] Key Event Detected, Closing...")
-        exit(0)
