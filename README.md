@@ -9,23 +9,23 @@ development-todo is a program used to search through directories on the local ma
 
 import sys
 ...
-``` 
+```
 
 todo ./
-``` 
+```
 File        Line#   Comment
-./file.py     2     Fix output Formatting 
+./file.py     2     Fix output Formatting
 ```
 
 ## Options
-``` 
+```
 -h, --help      show this help message and exit
 -i IGNORE       Ignore files with a certain extentsions
 -t MAX_THREADS  Define max threads (Default: 6)
 -v              Give Verbose output
-``` 
+```
 
 ## Todo
-- [ ] add support to untack the hidden files like .git,.idea etc
+- [x] add support to untack the hidden files like .git,.idea etc
 - [ ] use click insted of argparse
 - [ ] add label to the Todo

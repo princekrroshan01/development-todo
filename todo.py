@@ -108,14 +108,23 @@ class SearchThread(threading.Thread):
     # This method will be ran whenever the start
     # method is called.
     #-----------------------------------------------
+
+    @staticmethod
+    def not_hidden_path(path):
+        dirs=path.split(path)
+        if len(dirs) > 1:
+            return False
+        return True
+
     def run(self):
         self._running = True
         if os.path.isfile(self.path):
             self.file_queue.append(self.path)
         else:
-            for root, dirs, files in os.walk(self.path):
-                for file in files:
-                    self.file_queue.append(os.path.join(root, file))
+            if SearchThread.not_hidden_path(self.path):
+                for root, dirs, files in os.walk(self.path):
+                    for file in files:
+                        self.file_queue.append(os.path.join(root, file))
         self._running = False
 
     #-----------------------------------------------
@@ -180,7 +189,7 @@ if __name__ == '__main__':
         args = argparse.ArgumentParser(description="""
                 {0}   v.{1}
         --------------------------------------------------
-Tool to search through files on the local machine and identify 
+Tool to search through files on the local machine and identify
 @TODO tags to create a task list for developers.
 
 Usage:
